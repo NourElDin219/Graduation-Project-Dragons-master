@@ -28,18 +28,25 @@ namespace Graduation_Project_Dragons.Controllers
             _Ihosting = Ihosting;
             Environment = _Environment;
         }
-
         public IActionResult Index()
         {
-            // ViewBag.d= deepspeech.Main1();
+            //// ViewBag.d= deepspeech.Main1();
+            return View();
+        }
+
+        public IActionResult Speech(string w)
+        {
+            ViewBag.d = w;
             return View();
         }
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
         public IActionResult Index(Video v)
         {
-            Upload_Video(v.video);
-            return View();
+
+            string Words = deepspeech.Main1(Upload_Video(v.video));
+
+            return RedirectToAction("Speech", "Home", new { w = Words });
         }
         public string Upload_Video(IFormFile photo)
         {

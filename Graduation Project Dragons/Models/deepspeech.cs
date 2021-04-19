@@ -36,7 +36,7 @@ namespace Graduation_Project_Dragons.Models
             return retval;
         }
 
-        public static string Main1()
+        public static string Main1(string s)
         {
             string model = null;
             string audio = null;
@@ -82,13 +82,11 @@ namespace Graduation_Project_Dragons.Models
 
                     }
                     Directory.SetCurrentDirectory("C:/Users/Nour El-Din/Downloads/Graduation-Project-Dragons-master/Graduation Project Dragons/wwwroot/Video");
-                    string v_Name = "1";
+                    string v_Name =s.Split('.')[0];
                     bool done = false;
                     var enviroment = System.Environment.CurrentDirectory;
                     string projectDirectory = Directory.GetParent(enviroment).Parent.FullName;
                     Console.WriteLine(projectDirectory);
-                    while (!done)
-                    {
                         string m_Path = @$"C:/Users/Nour El-Din/Downloads/Graduation-Project-Dragons-master/Graduation Project Dragons/wwwroot/Video/{v_Name}.mp3";
                         bool mp3_Found = File.Exists(m_Path) ? true : false;
                         string w_Path = @$"C:/Users/Nour El-Din/Downloads/Graduation-Project-Dragons-master/Graduation Project Dragons/wwwroot/Video/{v_Name}.wav";
@@ -149,7 +147,6 @@ namespace Graduation_Project_Dragons.Models
                             waveBuffer.Clear();
                         }
                     }
-                }
             }
             catch (Exception ex)
             {
