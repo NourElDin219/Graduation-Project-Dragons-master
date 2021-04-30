@@ -113,7 +113,7 @@ namespace Graduation_Project_Dragons.Models
                         }
                         else
                         {
-                            string audioFile = "C:/Users/Nour El-Din/Downloads/Graduation-Project-Dragons-master/Graduation Project Dragons/wwwroot/Video/1.wav";
+                            string audioFile = $"C:/Users/Nour El-Din/Downloads/Graduation-Project-Dragons-master/Graduation Project Dragons/wwwroot/Video/{v_Name}.wav";
                             var waveBuffer = new WaveBuffer(File.ReadAllBytes(audioFile));
                             using (var waveInfo = new WaveFileReader(audioFile))
                             {
@@ -154,6 +154,7 @@ namespace Graduation_Project_Dragons.Models
                                         new_Data.word = temp;
                                         full_Text.Add(new_Data);
                                         temp = "";
+                                        new_Data = new data();
                                         
                                         continue;
                                     }
