@@ -14,6 +14,19 @@ using DeepSpeechClient.Models;
 
 namespace Graduation_Project_Dragons.Models
 {
+    public class data
+    {
+        public double start;
+        public double end;
+        public string word;
+        public data()
+        {
+            start = 0;
+            end = 0;
+            word = "";
+        }
+
+    }
     public class deepspeech
     {
         /// <summary>
@@ -47,8 +60,6 @@ namespace Graduation_Project_Dragons.Models
             audio = "C:/Users/Nour El-Din/Documents/deepspeech/audio";
             //hotwords = GetArgument(args, "--hot_words");
             extended = true;
-
-
             Stopwatch stopwatch = new Stopwatch();
             try
             {
@@ -59,7 +70,6 @@ namespace Graduation_Project_Dragons.Models
                 {
                     // sphinx-doc: csharp_ref_model_stop
                     stopwatch.Stop();
-
                     Console.WriteLine($"Model loaded - {stopwatch.Elapsed.Milliseconds} ms");
                     stopwatch.Reset();
                     if (scorer != null)
@@ -83,14 +93,13 @@ namespace Graduation_Project_Dragons.Models
                     }
                     Directory.SetCurrentDirectory("C:/Users/Nour El-Din/Downloads/Graduation-Project-Dragons-master/Graduation Project Dragons/wwwroot/Video");
                     string v_Name =s.Split('.')[0];
-                    bool done = false;
                     var enviroment = System.Environment.CurrentDirectory;
                     string projectDirectory = Directory.GetParent(enviroment).Parent.FullName;
                     Console.WriteLine(projectDirectory);
                         string m_Path = @$"C:/Users/Nour El-Din/Downloads/Graduation-Project-Dragons-master/Graduation Project Dragons/wwwroot/Video/{v_Name}.mp3";
                         bool mp3_Found = File.Exists(m_Path) ? true : false;
                         string w_Path = @$"C:/Users/Nour El-Din/Downloads/Graduation-Project-Dragons-master/Graduation Project Dragons/wwwroot/Video/{v_Name}.wav";
-                        bool wav_Found = File.Exists(w_Path) ? true : false;
+                        bool wav_Found = File.Exists(w_Path) ? true : false;    
                         string strCmdText;
                         if (!mp3_Found)
                         {
@@ -120,14 +129,46 @@ namespace Graduation_Project_Dragons.Models
                                     Metadata metaResult = sttClient.SpeechToTextWithMetadata(waveBuffer.ShortBuffer,
                                     Convert.ToUInt32(waveBuffer.MaxSize / 2), 1);
                                     speechResult = MetadataToString(metaResult.Transcripts[0]);
-
-                                    foreach (var c in metaResult.Transcripts[0].Tokens)
+                                data new_Data = new data();
+                                List<data> full_Text = new List<data>();
+                                double word_Start = 0; ;
+                                double word_End;
+                                string temp = "";
+                                int counter = 0;
+                                int counter2 = 0;
+                                foreach (var c in metaResult.Transcripts[0].Tokens)
                                     {
-
+                                    counter2++;
+                                    if (counter == 0)
+                                    {
+                                        word_Start = c.StartTime;
+                                        counter++;
+                                    }
+                                    temp += c.Text;
+                                    if (c.Text == " ")
+                                    {
+                                        counter = 0;
+                                        word_End = c.StartTime;
+                                        new_Data.start = word_Start;
+                                        new_Data.end = word_End;
+                                        new_Data.word = temp;
+                                        full_Text.Add(new_Data);
+                                        temp = "";
+                                        
+                                        continue;
+                                    }
                                         w += c.Text;
-
+                                    if (counter2 == metaResult.Transcripts[0].Tokens.Length - 1)
+                                    {
+                                        word_End = c.StartTime;
+                                        new_Data.start = word_Start;
+                                        new_Data.end = word_End;
+                                        new_Data.word = temp;
+                                        full_Text.Add(new_Data);
+                                        temp = "";
                                     }
 
+                                    }
                                 }
                                 else
                                 {
@@ -135,13 +176,10 @@ namespace Graduation_Project_Dragons.Models
                                         Convert.ToUInt32(waveBuffer.MaxSize / 2));
                                 }
                                 // sphinx-doc: csharp_ref_inference_stop
-
                                 stopwatch.Stop();
-
                                 Console.WriteLine($"Audio duration: {waveInfo.TotalTime.ToString()}");
                                 Console.WriteLine($"Inference took: {stopwatch.Elapsed.ToString()}");
                                 Console.WriteLine((extended ? $"Extended result: " : "Recognized text: ") + speechResult);
-                                done = true;
                                 return w;
                             }
                             waveBuffer.Clear();
